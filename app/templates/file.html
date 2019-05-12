@@ -1,0 +1,57 @@
+{% extends "base.html"%}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_content %}
+
+
+<form method="POST" action="{{ url_for('main.upload') }}" enctype="multipart/form-data">
+    <div class="col-md-4">
+   
+            <hr />
+            {{ wtf.quick_form(form) }}
+        </div>
+        
+        <img id="pic" src="{{url_for('static',filename=filename)}}">
+</form>
+
+<div class="container">
+	<h2>详细表</h2>
+    </br>                          
+	<table class="table table-hover">
+		<thead>
+			<tr>
+                
+                <th>封装</th>
+                <th>数量</th>
+                <th>增加</th>
+			</tr>
+        </thead>
+        
+		<tbody>
+              
+              {% for i,v in z%}
+
+			<tr id="listTable">
+                          
+                <td id="i">{{i}}</td>
+                <td id="v">{{v}}</td>
+                <td><button id="btn" onclick="delete_key(this)">删除</button></td>
+                <td><a href="{{url_for('main.change',z=z)}}">修改</a></td>
+            </tr>
+            {%endfor %}
+            
+         
+			
+		</tbody>
+    </table>
+
+</div>
+<script>
+    function delete_key(obj) {
+        var list=document.getElementById(listTable)
+        var oParentnode = obj.parentNode.parentNode;    
+        list.removeChild(oParentnode)
+      }
+</script>
+{% endblock%}
+

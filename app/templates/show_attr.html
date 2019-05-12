@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import '_macro.html' as sp %}
+{% block title %}
+    物料属性
+{% endblock %}
+
+{% block page_content %}
+
+
+<div class="container">
+	<h4>
+    </br>
+    </br>
+        
+    </h4>
+    </br>
+   
+    <ul class="list-inline">
+        <li>元件名:{{name}} </li>
+        <li>封装:{{fz}}</li>
+        <li>类型:{{mtype}}</li>
+        <li><a href="{{url_for('main.material_detail',ID=ID,mtype=mtype,name=name,fz=fz)}}">添加属性</a></li>
+    </ul>
+
+<table class="table">
+    <thead>
+            {%if data_dict%}
+        <tr>
+            {%for name in data_dict%}
+            
+            <th>{{name}}</th>
+        
+            {%endfor%}
+        </tr>
+        {%endif%}
+    </thead>
+    
+    <tbody>
+        {%if value%}
+        <tr>
+            {%for val in value%}
+            <td>{{val}}</td>
+            {% endfor %}
+        </tr>
+        {%endif%}
+        
+    </tbody>
+</table>    
+
+</div>                          
+{% endblock %}

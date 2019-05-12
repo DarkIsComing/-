@@ -1,0 +1,339 @@
+{% extends "base.html"%}
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+{% block page_content %}
+
+<form class="form-inline" method="POST" action="{{ url_for('main.upload') }}" enctype="multipart/form-data">
+    <div class="col-md-4">     
+            {{ wtf.quick_form(form) }}
+        </div>   
+</form>
+
+
+
+<div id="dataid" d="{{filename}}" style="display:none"></div>
+<table class="table table-hover table-bordered" id="mytable">
+	<thead>
+		
+		<tr>
+			<td><input type="checkbox" onclick="checkAll(this)"/></td>
+			<td>{{filename}}</td>
+            <td><a href="javascript:;" class="btn btn-danger" role="button" onclick="delAll(this)">全部删除</a></td>
+			<td>
+				<a class="btn btn-danger" role="button" onclick="check('listTable')">全部检查</a>
+				
+			</td>
+			<td>
+				<a class="btn btn-danger" role="button" onclick="trans('listTable')">全部保存</a>
+			</td>
+			<td><a href="{{url_for('main.csv')}}" class="btn btn-danger" role="button" >查看列表</a></td>
+		</tr>
+		<tr>
+			<th>选中</th>
+			<th>元件</th>
+			<th>封装</th>
+			<th>数量</th>
+            <th>操作</th>
+            <th>状态</th>
+		</tr>
+    </thead>
+    
+	<tbody id="listTable">	
+            {% for yj,fz,c in z%}
+		<tr id="line">
+			<td><input type="checkbox" name="item" /></td>
+			<td id="i">{{yj}}</td>
+			<td id="i">{{fz}}</td>
+			<td id="v">{{c}}</td>
+			
+			<td id='opration'>
+				<input type="button" name="" value="删除" class="btn btn-danger" onclick="del(this)" />
+				<input type="button" name="" value="修改" class="btn btn-info" onclick="modify(this)" />
+			</td>
+			<td id='state'></td>
+        </tr>
+        {%endfor %}
+    </tbody>
+    
+</table>
+<hr />
+
+<h2>新增数据</h2>
+<form>
+	<table class="table table-hover table-bordered">
+		<tr>
+			<th>元件</th>
+			<td><input type="text" name="" class="form-control" id="yj" /></td>
+		</tr>
+		<tr>
+			<th>封装</th>
+			<td><input type="text" name="" class="form-control" id="id" /></td>
+		</tr>
+		<tr>
+			<th>数量</th>
+			<td><input type="text" name="" class="form-control" id="num" /></td>
+		</tr>
+		
+		<tr>
+			<td colspan="2">
+				<input type="reset" value="重置" class="btn btn-primary" id="reset" />   
+                <input type="button" value="添加"  class="btn btn-success" id="add"  onclick="addList()" />
+                <input type="button" value="更新"  class="btn btn-info" id=""  onclick="update()" />
+			</td>
+		</tr>
+	</table>
+</form>
+	<script src="../static/js/jquery-3.4.0.min.js"></script>
+    <script src="../static/js/jquery-ui.min.js"></script>
+    <link type="text/css" href="../static/css/jquery-ui.min.css" rel="stylesheet">
+<!--<script type="text/javascript" src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript" src="/Users/zhaotengwei/Desktop/ERP/app/static/js/jquery-ui.js"></script>
+<link rel="stylesheet" type="text/css" href="/Users/zhaotengwei/Desktop/ERP/app/static/css/jquery-ui.css" />
+<script type="text/javascript" src="/Users/zhaotengwei/Desktop/ERP/app/static/js/autocomplete.js"></script>-->
+	
+<script type="text/javascript">	
+	//模糊匹配
+	$("#yj").autocomplete({
+		source: function(request, response){
+			$.ajax({
+				url:"{{url_for('main.get_yj')}}",
+				dataType: "json",
+				data:{
+					q_yj: request.term
+				},
+				success: function( data ) {
+					response(data['result'])
+				}
+			});
+		},
+		minLength:1,
+	});
+
+	$("#id").autocomplete({
+		source: function(request, response){
+			$.ajax({
+				url:"{{url_for('main.get_fz')}}",
+				dataType: "json",
+				data:{
+					q_fz: request.term
+				},
+				success: function( data ) {
+					response(data['result'])
+				}
+			});
+		},
+		minLength:1,
+	});
+
+
+	//add功能
+	function addList(){
+		var oYj = document.getElementById('yj').value;
+		var oId = document.getElementById('id').value;
+		var oNum = document.getElementById('num').value;
+		var oTr = document.createElement('tr');
+		var oTd1 = document.createElement('td');
+		var check = document.createElement('input');
+		oTd1.appendChild(check); 
+		check.setAttribute('type','checkbox');
+		check.setAttribute('name','item');
+		var oTd2 = document.createElement('td');
+		oTd2.innerHTML = oYj;
+		var oTd3 = document.createElement('td');
+		oTd3.innerHTML = oId;
+		var oTd4 = document.createElement('td');
+		oTd4.innerHTML = oNum;
+		var oTd5 = document.createElement('td');
+		var oInputDelete = document.createElement('input');
+		var oInputModify = document.createElement('input');
+		
+		oTr.appendChild(oTd1);
+		oTr.appendChild(oTd2);
+		oTr.appendChild(oTd3);
+		oTr.appendChild(oTd4);
+		oTr.appendChild(oTd5);
+
+		
+		oInputDelete.setAttribute('type','button');
+		oInputDelete.setAttribute('value','删除');
+		oInputDelete.setAttribute('onclick','del(this)');
+		oInputDelete.className = 'btn btn-danger';
+		oInputModify.setAttribute('type','button');
+		oInputModify.setAttribute('value','修改');
+		oInputModify.setAttribute('onclick','modify(this)');
+		oInputModify.className = 'btn btn-info';
+		oTd5.appendChild(oInputDelete);
+		oTd5.appendChild(oInputModify);
+		
+		var olistTable = document.getElementById('listTable');
+		olistTable.appendChild(oTr);
+	}
+	//del单点功能
+	function del(obj){
+		var oParentnode = obj.parentNode.parentNode;
+		var olistTable = document.getElementById('listTable');
+		olistTable.removeChild(oParentnode);
+	}
+
+	//check功能
+	function check(id){
+		var mytable = document.getElementById('mytable');
+		var yj=getTableContent(id).yj;
+		var d=getTableContent(id).ids;
+		var num=getTableContent(id).number;
+		data_json={
+			'yj':yj,
+			'id':d
+		};
+		$.ajax({
+			url:"{{url_for('main.check')}}",
+			type:'POST',
+			data:jQuery.param(data_json,true),
+			success:function(msg) {
+				//alert(msg['data'].length);
+				array=msg['data'];
+				for(var i=0; i<array.length;i++)
+				{
+					//alert(typeof(array[i]))
+					if(array[i])
+					{
+						mytable.rows[i+2].cells[5].innerText ='存在';
+						mytable.rows[i+2].cells[5].setAttribute("style","color:green");
+					}
+					else{
+						mytable.rows[i+2].cells[5].innerText ='不存在';
+						mytable.rows[i+2].cells[5].setAttribute("style","color:red");
+					}
+				}
+				//mytable.rows[rowIndex].cells[1].innerHTML = oYj.value;
+				/*for(var i=0,rows=mytable.rows.length; i<rows; i++){
+
+					var State=document.getElementById('state');
+				
+					oP=document.createElement('p');
+					oP.innerText='exists';
+					oP.setAttribute("style","color:green");
+					State.appendChild(oP);
+					
+				}*/
+			}
+		})
+	}
+	//全选
+	function checkAll(c){
+		var status = c.checked;
+		var oItems = document.getElementsByName('item');
+		for(var i=0;i<oItems.length;i++){
+			oItems[i].checked=status;
+		}
+	}
+	//delAll功能
+	function delAll(){
+		var olistTable = document.getElementById('listTable');
+		var items = document.getElementsByName("item");
+		for(var j=0;j<items.length;j++){	
+			if(items[j].checked)//如果item被选中
+			{
+				var oParentnode = items[j].parentNode.parentNode;
+				olistTable.removeChild(oParentnode);
+				j--;
+			}
+		}
+	}
+	//modify功能
+	function modify(obj){
+		var oYj = document.getElementById('yj')
+		var oId = document.getElementById('id');
+		var oNum = document.getElementById('num');
+		var oTr = obj.parentNode.parentNode;
+		var aTd = oTr.getElementsByTagName('td');
+		rowIndex = obj.parentNode.parentNode.rowIndex;  
+		oYj.value = aTd[1].innerHTML;
+		oId.value = aTd[2].innerHTML;
+		oNum.value = aTd[3].innerHTML;
+		console.log(aTd[4].innerHTML);
+		//alert(i);
+	}
+	//update功能
+	function update(){
+		var oYj = document.getElementById('yj')
+		var oId = document.getElementById('id');
+		var oNum = document.getElementById('num');
+		var oMytable = document.getElementById('mytable');
+		//alert(rowIndex);
+		//var aTd = rowIndex.cells;
+		console.log(oMytable.rows[rowIndex].cells)
+		oMytable.rows[rowIndex].cells[1].innerHTML = oYj.value;
+		oMytable.rows[rowIndex].cells[2].innerHTML = oId.value;
+		oMytable.rows[rowIndex].cells[3].innerHTML = oNum.value;
+	}
+
+
+
+	
+
+	function getTableContent(id){
+		var mytable = document.getElementById(id);		//[object HTMLTableSectionElement]
+	
+		//alert(mytable.rows[0].cells.length);		//mytable.rows：HTML Collection     mytable.rows.length ：11
+		var data = [];
+		var yj =new Array();
+		var Id= new Array();
+		var num= new Array();
+        for(var i=0,rows=mytable.rows.length; i<rows; i++){
+            for(var j=0,cells=mytable.rows[i].cells.length; j<cells; j++){
+                if(j==1)
+				{
+					yj[i]= mytable.rows[i].cells[j].innerText;
+				}
+				if(j==2)
+				{
+					Id[i]= mytable.rows[i].cells[j].innerText;
+				}
+				if(j==3)
+				{
+					num[i] = mytable.rows[i].cells[j].innerText;
+				}
+            }
+		}
+		//alert(data)
+        return {yj:yj,ids:Id,number:num};
+	}
+	
+
+	function trans(id){
+		var yj=getTableContent(id).yj;
+		var d=getTableContent(id).ids;
+		var num=getTableContent(id).number;
+		
+		var filename = document.getElementById('dataid').getAttribute('d');
+		
+		data_json={
+			'yj':yj,
+			'id':d,
+			'num':num,
+			'filename':filename
+		};
+		$.post({
+			url:"{{url_for('main.save')}}",
+			data:jQuery.param(data_json,true),
+			success:function(msg) {
+				if(msg['data']=='success'){
+					alert('保存成功')
+				}
+				if(msg['data']=='fail'){
+					alert('保存失败')
+				}
+			},
+			error:function(){
+				alert('服务器错误')
+			}
+		})
+				
+	}
+
+</script>
+
+
+{% endblock%}

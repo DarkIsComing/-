@@ -1,0 +1,42 @@
+<head>
+        <script src="../static/js/jquery-3.4.0.min.js"></script>
+        <script src="../static/js/jquery-ui.min.js"></script>
+        <link type="text/css" href="../static/css/jquery-ui.min.css" rel="stylesheet">
+    <script type="text/javascript">
+    $(document).ready(function () {
+			function searchOpen() {
+				var search = $('#yj').val();
+				$.ajax({
+					url: "{{url_for('main.get_data')}}",
+					dataType: 'json',
+					type: 'GET',
+					async: false,
+					data: injectCsrfToken({
+						search: search
+					}),
+					success: function (data) {
+						alert(data)
+						searchResult(data)
+					},
+					error: function () {
+						console.log('error');
+					}
+		});
+			}
+			function searchResult(data) {
+				console.log('sdfsdfd');
+				$( "#yj" ).autocomplete ({
+					source: data['matching_results']
+				});
+			}
+			$("#yj").on('keyup', function () {
+				searchOpen();
+			});
+		});
+    </script>
+    </head>
+    <body>
+        <div>
+            <input name="autocomplete" type="text" id="yj" class="form-control input-lg"/>
+        </div>
+    </body>

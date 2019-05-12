@@ -1,0 +1,52 @@
+{% extends "base.html"%}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import '_macro.html' as sp %}
+
+{% block page_content%}
+
+<div class="container">
+	<h2>进货表</h2>
+    </br>                          
+	<table class="table table-hover">
+		<thead>
+			<tr>
+                <th>进货物料元件名</th>
+                <th>进货数量</th>
+                <th>进货价格(元）</th>
+                <th>进货日期</th>
+                <th>物料ID</th>
+			</tr>
+        </thead>
+        
+		<tbody>
+                {%for item in page_data.items%}
+			<tr>
+                <td>{{item.物料名称}}</td>
+                <td>{{item.进货数量}}</td>
+                <td>{{item.进货价格}}</td>
+                <td>{{item.进货日期}}</td>
+                <td>{{item.物料ID}}</td>
+                
+            </tr>
+            {% endfor %}
+			
+		</tbody>
+    </table>
+    <div class="pagination">
+            {{sp.split_page(page_data,'main.buy_list')}}
+    </div>
+</div>
+
+{#
+
+<div class="container">
+    进货id:{{buy_order.进货id}}
+    进货物料名称:{{buy_order.物料名称}}
+    进货数量:{{buy_order.进货数量}}
+    进货价格:{{buy_order.进货价格}}
+    进货日期:{{buy_order.进货日期}}
+    物料ID:{{buy_order.物料ID}}
+</div>
+#}
+{% endblock %}
+

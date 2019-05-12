@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% import '_macro.html' as sp %}
+{% block title %}
+    分页显示物料信息
+{% endblock %}
+
+{% block page_content %}
+<div class="container">
+	<h2>物料表</h2>
+    </br>                          
+	<table class="table table-hover">
+		<thead>
+			<tr>
+                <th>物料ID</th>
+                <th>元件名</th>
+                <th>封装</th>
+                <th>物料类型</th>
+                <th>物料库存</th>
+                <th>备注</th>
+			</tr>
+        </thead>
+        
+		<tbody>
+            {%for material in page_data.items%}
+			<tr>
+                <td>{{material.ID}}</td>
+                <td>{{material.物料名称}}</td>
+                <td>{{material.物料型号}}</td>
+                <td>{{material.物料类型}}</td>
+                {%if material.物料库存%}
+                <td>{{material.物料库存}}</td>
+                {%else%}
+                <td>0</td>
+                {%endif%}
+                {%if material.备注%}
+                <td>{{material.备注}}</td>
+                {%else%}
+                <td></td>
+                {%endif%}
+                <td><a href="{{url_for('main.delete_material',ID=material.ID)}}">删除物料</a></td>
+                <td><a href="{{url_for('main.buy',ID=material.ID)}}">进货</a></td>
+                <td><a href="{{url_for('main.sale',ID=material.ID)}}">出货</a></td>
+                <td><a href="{{url_for('main.material_detail',ID=material.ID,mtype=material.物料类型)}}">添加属性</a></td>
+                <td><a href="{{url_for('main.show_attr',ID=material.ID,name=material.物料名称,fz=material.物料型号,mtype=material.物料类型)}}">展示属性</a></td>
+                <td><a href="{{url_for('main.production_record',ID=material.ID,name=material.物料名称)}}">库存调整</a></td>
+            </tr>
+            {% endfor %}
+		</tbody>
+    </table>
+    
+    <div class="pagination">
+            {{sp.split_page(page_data,'main.material_list',words)}}
+    </div>
+     
+
+    
+</div>
+{% endblock %}

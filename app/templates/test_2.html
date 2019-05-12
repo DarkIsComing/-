@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <link rel="stylesheet" href="/jquery-weui-build/dist/lib/weui.min.css">
+    <link rel="stylesheet" href="/jquery-weui-build/dist/css/jquery-weui.css">
+    <link rel="stylesheet" href="/jquery-weui-build/demos/css/demos.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <script type="text/javascript" src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/static/jquery-weui-build/dist/lib/fastclick.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+    <script>
+        $(function () {
+            FastClick.attach(document.body);
+        });
+    </script>
+    <script src="/jquery-weui-build/dist/js/jquery-weui.js"></script>
+</head>
+<body>
+
+<div class="ui-widget">
+
+
+    <div class="weui-search-bar" id="searchBar">
+        <form class="weui-search-bar__form" action="#">
+            <div class="weui-search-bar__box">
+                <i class="weui-icon-search"></i>
+                <input type="search" class="weui-search-bar__input" id="tags" placeholder="搜索" required=""
+                       onkeyup="catch_keyword(this.value)">
+                <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+            </div>
+            <label class="weui-search-bar__label" id="searchText"
+                   style="transform-origin: 0px 0px 0px; opacity: 1; transform: scale(1, 1);">
+                <i class="weui-icon-search"></i>
+                <span>搜索</span>
+            </label>
+        </form>
+        <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
+    </div>
+</div>
+
+<script>
+    var availableTags = [];//数据源
+
+    //先初始化自动补全功能
+    $("#tags").autocomplete({
+        source: availableTags //数据源
+    });
+
+    //去掉字符串中任意位置的空格
+    function Trim(str, is_global) {
+        var result;
+        result = str.replace(/(^\s+)|(\s+$)/g, "");
+        if (is_global.toLowerCase() == "g") {
+            result = result.replace(/\s/g, "");
+        }
+        return result;
+    }
+
+    //判断字符串是否全是中文
+    function isChn(str) {
+        var reg = /^[\u4E00-\u9FA5]+$/;
+        if (!reg.test(str)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    //捕捉键入的关键字
+    function catch_keyword(word = null) {
+
+        if (isChn(Trim(word, 'g'))) {
+            get_source(word);
+            $("#tags").autocomplete({
+                source: availableTags //数据源
+            });
+
+        }
+    }
+
+    //请求后端获取数据源
+    function get_source(word = null) {
+        var url = "{{url_for('main.get_data',word=word)}}"
+        $.get({
+            type: 'GET',
+            url: url,
+            async: false,//改为同步
+            dataType: 'json',
+            success: function (response) {
+                console.log('1');
+                alert(response['data'])
+                availableTags = response;
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+
+
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import '_macro.html' as sp %}
+{% block title %}
+    生产表总览
+{% endblock %}
+
+{% block page_content %}
+{%if form%}
+<div class="col-md-4">
+   
+    <hr />
+    {{ wtf.quick_form(form) }}
+</div>
+{%endif%}
+<div class="container">
+	<h2>保存的生产表</h2>
+    </br>                          
+	<table class="table table-hover">
+		<thead>
+			<tr>
+                <th>生产表名称</th>
+			</tr>
+        </thead>
+        
+		<tbody>
+			{%if files%}
+            {%for name in files%}
+			<tr>
+                <td>{{name}}</td>
+                
+                <td><a href="{{url_for('main.opencsv',name=name,path=path)}}">打开</a></td>
+                
+            </tr>
+			{% endfor %}
+			{%elif suggestions%}
+			{%for name in suggestions%}
+			<tr>
+                <td>{{name}}</td>
+                
+                <td><a href="{{url_for('main.opencsv',name=name,path=path)}}">打开</a></td>
+                
+            </tr>
+			{%endfor%}
+			{%endif%}
+		</tbody>
+    </table>
+    
+            
+    
+    
+</div>
+{% endblock %}

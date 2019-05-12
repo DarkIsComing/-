@@ -1,0 +1,61 @@
+{% extends "base.html"%}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import '_macro.html' as sp %}
+
+
+
+{% block page_content %}
+
+<div class="container">
+	
+	<h2>库存流水搜索结果</h2>
+	<br>                          
+	<table class="table table-hover">
+		<thead>
+			<tr>
+                <th>物料ID</th>
+                <th>物料名称</th>               
+                <th>日期</th>
+				<th>类型</th>
+				<th>发生数量</th>
+                <th>库存数量</th>
+			</tr>
+        </thead>
+      
+		<tbody>
+            
+			{%for item in page_data.items%}
+			<tr>
+                
+				<td>{{item.物料ID}}</td>
+                <td>{{item.物料名称}}</td>
+                <td>{{item.日期}}</td>
+				<td>{%if item.类型=='in'%}
+						<p>进货单</p>
+					{%elif item.类型=='out'%}
+						<p>出货单</p>
+					{%elif item.类型=='adjust'%}
+						<p>盘整单</p>
+					{%elif item.类型=='product'%}
+						<p>生产单</p>
+					{%endif%}
+				</td>
+				<td>{{item.发生数量}}</td>
+				<td>{{item.库存数量}}</td>
+				
+			</tr>
+			{%endfor%}
+			
+
+        </tbody>
+       
+	</table>
+    <div class="pagination">
+	{{sp.split_page(page_data,'main.search_result',words)}}
+    </div>
+</div>
+
+
+
+
+{% endblock %}

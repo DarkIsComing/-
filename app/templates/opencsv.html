@@ -1,0 +1,55 @@
+{% extends "base.html"%}
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+
+
+
+			
+{% block page_content %}	
+	
+<div class="container">
+	
+	<h2>生产表单页</h2>
+	<br>                          
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th>元件</th>
+				<th>封装名称</th>
+				<th>数量</th>
+				<th>总量</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody>
+				{%for yj,fz,v,s in z%}
+				<tr id="line">
+					<td id="yj">{{yj}}</td>
+					<td id="fz">{{fz}}</td>
+					<td id="v">{{v}}</td>
+		
+					<td id="s" style="color:black">{{s}}</td>
+					
+					
+					<td><a href="{{url_for('main.change_sum',path=path,name=name,yj=yj,fz=fz)}}">修改总数</a></td>
+					<td><a href="{{url_for('main.adjust_inventory',path=path,name=name,yj=yj,fz=fz,s=s)}}">计算入库</a></td>					
+				</tr>
+				{%endfor %}
+			
+		
+		</tbody>
+	</table>
+
+	<div class="col-md-4">
+	</br>
+	<hr />
+		{{ wtf.quick_form(form) }}
+	</div>
+	
+</div>
+
+
+
+
+{% endblock %}

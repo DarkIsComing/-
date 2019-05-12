@@ -1,0 +1,57 @@
+{% extends "base.html"%}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import '_macro.html' as sp %}
+
+
+{% block page_content%}
+<div class="container">
+	<h2>出货表</h2>
+    </br>                          
+	<table class="table table-hover">
+		<thead>
+			<tr>
+                <th>出货物料名称</th>
+                <th>出货数量</th>
+                <th>出货价格(元）</th>
+                <th>出货日期</th>
+                <th>物料ID</th>
+			</tr>
+        </thead>
+        
+		<tbody>
+                {%for item in page_data.items%}
+			<tr>
+                <td>{{item.物料名称}}</td>
+                <td>{{item.出货数量}}</td>
+                <td>{{item.出货价格}}</td>
+                <td>{{item.出货日期}}</td>
+                <td>{{item.物料ID}}</td>
+            </tr>
+            {% endfor %}
+			<!-- <tr>
+				<td>2</td>
+				<td>Debbie</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td>John</td>
+			</tr> -->
+		</tbody>
+    </table>
+    <div class="pagination">
+            {{sp.split_page(page_data,'main.sale_list')}}
+    </div>
+</div>
+
+{#
+<!-- <div class="container">
+    出货id:{{sale_order.出货id}}
+    出货物料名称:{{sale_order.物料名称}}
+    出货数量:{{sale_order.出货数量}}
+    出货价格:{{sale_order.出货价格}}
+    出货日期:{{sale_order.出货日期}}
+    物料ID:{{sale_order.物料ID}}
+</div> -->
+#}
+{% endblock %}
+

@@ -1,0 +1,14 @@
+{% extends "base.html"%}
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+{% block page_content %}
+
+<div class="col-md-4">
+    <a href="{{url_for('main.add_material_attribute')}}">添加物料类型</a>
+    <hr />
+    {{ wtf.quick_form(form) }}
+</div>
+
+{% endblock%}
+
